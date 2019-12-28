@@ -28,7 +28,7 @@ def main():
 
     print("Joystick 0 name: " + joystick.get_name())
 
-    dataset_file = open("./dataset/dataset.csv", "a")
+    dataset_file = open("./dataset3/dataset3.csv", "a")
     pygame.display.init()
 
     while(True):
@@ -37,7 +37,7 @@ def main():
             dataset_file.write("image,angle")
             print("STARTED RECORDING")
 
-        time.sleep(1)
+        time.sleep(0.2)
 
         img = ImageGrab.grab(bbox=(500,330,850,500)) # (bbox= x,y,width,height)
         img_np = np.array(img)
@@ -52,7 +52,7 @@ def main():
             print(frame.shape)
 
         img_filename = str(img_file_counter) + ".jpg"
-        cv2.imwrite("./dataset/" + img_filename, frame)
+        cv2.imwrite("./dataset3/" + img_filename, frame)
         img_file_counter += 1
 
         dataset_file.write("\n{0},{1}".format(img_filename, joystick.get_axis(0)))

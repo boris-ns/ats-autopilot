@@ -38,15 +38,8 @@ def process_img(original_img):
 
 if __name__ == "__main__":
 
-    # pygame.joystick.init()
-    # joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
-
-    # pygame.display.init()
-
-    # joystick = pygame.joystick.Joystick(0)
-    # joystick.init()
-
     model = load_model("./models/autopilot.h5")
+
     vj.open()
     setJoy(0, 0, 16000)
 
@@ -63,20 +56,30 @@ if __name__ == "__main__":
         predicted_angle = model.predict(np.expand_dims(frame, axis=0))[0][0]
 
         # Normalizacija
-        # predicted_angle = (predicted_angle - -1) / 1 - -1
+        # predicted_angle = (predicted_angle - -5) / 5 - -5
 
-        if predicted_angle > 1 or predicted_angle < -1:
-            predicted_angle /= 100000
+        # if predicted_angle > 1 or predicted_angle < -1:
+        #     predicted_angle /= 100000
 
-        print("Steering angle: " + str(predicted_angle))
+        steering_angle = 0
 
-        setJoy(predicted_angle, 0, 16000)
+        # if predicted_angle > 1: 
+        #     predicted_angle = 1
+        # elif predicted_angle < -1:
+        #     predicted_angle = -1
+
+        # TODO: Da li treba dodati neku normalizaciju ?
+
+        steering_angle = predicted_angle
+
+        print("Predicted: " + str(predicted_angle) + " Steering angle: " + str(steering_angle))
+
+        setJoy(steering_angle, 0, 16000)
         
-        # pygame.event.pump()
-        # print("X axis: {0}".format(joystick.get_axis(0)))
-
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
 
+    # Reset and close virtual joystick
+    setJoy(0, 0, 16000)
     vj.close()
