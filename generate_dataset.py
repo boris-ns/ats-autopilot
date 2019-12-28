@@ -55,7 +55,7 @@ def main():
         cv2.imwrite("./dataset/" + img_filename, frame)
         img_file_counter += 1
 
-        dataset_file.write("{0},{1}\n".format(img_filename, joystick.get_axis(0)))
+        dataset_file.write("\n{0},{1}".format(img_filename, joystick.get_axis(0)))
 
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
