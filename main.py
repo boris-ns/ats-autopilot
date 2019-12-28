@@ -4,6 +4,8 @@ from PIL import ImageGrab
 import pygame
 from vjoy import vj, setJoy
 
+from keras.models import load_model
+
 def get_region_of_interest(image, vertices):
     mask = np.zeros_like(image)
     cv2.fillPoly(mask, vertices, 255)
@@ -36,43 +38,42 @@ def process_img(original_img):
 
 if __name__ == "__main__":
 
-    pygame.joystick.init()
-    joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+    # pygame.joystick.init()
+    # joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
 
-    print("Number of joysticks: {0}".format(pygame.joystick.get_count()))
+    # pygame.display.init()
 
-    # TODO: provera da li je detektovan dzojstik
+    # joystick = pygame.joystick.Joystick(0)
+    # joystick.init()
 
-    pygame.display.init()
-
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
-    print(joystick.get_name())
-    print(joystick.get_numaxes())
-
+    model = load_model("./models/autopilot.h5")
     vj.open()
+    setJoy(0, 0, 16000)
 
     while(True):
-        setJoy(1, 0, 16000)
-
-        img = ImageGrab.grab(bbox=(500,100,1000,510)) # (bbox= x,y,width,height)
+        img = ImageGrab.grab(bbox=(500,330,850,500)) # (bbox= x,y,width,height)
         img_np = np.array(img)
         frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
 
-        processed_img = process_img(frame)
-
-        cv2.imshow("Processed image", processed_img)
-        
-        # Middle line
-        cv2.line(frame, (200, 0), (200, 700), [255, 255, 0], 3)
-        
-        # Horizontal line
-        cv2.line(frame, (0, 350), (500, 350), [255, 0, 0], 3)
+        # processed_img = process_img(frame)
+        # cv2.imshow("Processed image", processed_img)
 
         cv2.imshow("Original", frame)
 
-        pygame.event.pump()
-        print("X axis: {0}".format(joystick.get_axis(0)))
+        predicted_angle = model.predict(np.expand_dims(frame, axis=0))[0][0]
+
+        # Normalizacija
+        # predicted_angle = (predicted_angle - -1) / 1 - -1
+
+        if predicted_angle > 1 or predicted_angle < -1:
+            predicted_angle /= 100000
+
+        print("Steering angle: " + str(predicted_angle))
+
+        setJoy(predicted_angle, 0, 16000)
+        
+        # pygame.event.pump()
+        # print("X axis: {0}".format(joystick.get_axis(0)))
 
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
