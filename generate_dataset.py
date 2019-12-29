@@ -28,14 +28,34 @@ def main():
 
     print("Joystick 0 name: " + joystick.get_name())
 
-    dataset_file = open("./dataset3/dataset3.csv", "a")
     pygame.display.init()
+    dataset_file = open("./dataset3/dataset3.csv", "a")
 
-    while(True):
+    recording = False
+
+    print("Press Joystick button 0 to start recording")
+
+    while True:
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+
         if img_file_counter == 0:
-            time.sleep(10)
+            # time.sleep(10)
             dataset_file.write("image,angle")
-            print("STARTED RECORDING")
+
+        pygame.event.pump()
+        if joystick.get_button(0) == 1 and recording == False:
+            recording = True
+            print("\nStarted recording")
+            time.sleep(1)
+        elif joystick.get_button(0) == 1 and recording == True:
+            recording = False
+            print("\nPaused recording")
+            time.sleep(1)
+
+        if not recording:
+            continue
 
         time.sleep(0.2)
 
@@ -48,19 +68,11 @@ def main():
         pygame.event.pump()
         print("X axis: {0}".format(joystick.get_axis(0)))
 
-        if img_file_counter == 0:
-            print(frame.shape)
-
         img_filename = str(img_file_counter) + ".jpg"
         cv2.imwrite("./dataset3/" + img_filename, frame)
         img_file_counter += 1
 
         dataset_file.write("\n{0},{1}".format(img_filename, joystick.get_axis(0)))
-
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            cv2.destroyAllWindows()
-            break
-
 
     dataset_file.close()
     pygame.display.quit()
