@@ -5,6 +5,8 @@ import datetime
 
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Activation, BatchNormalization, Conv2D, Lambda, Dropout
+from keras.losses import mean_squared_error
+from keras.optimizers import Adam
 
 from sklearn.model_selection import train_test_split
 
@@ -85,7 +87,7 @@ def main():
 
     model.compile(
         optimizer='adam',
-        loss='binary_crossentropy',
+        loss=mean_squared_error,
         metrics=['accuracy']
     )
 
@@ -94,7 +96,7 @@ def main():
     #       validation_data=(np.array(valid_X),np.array(valid_Y)),
     #       callbacks=[early_stop])
 
-    model.fit(X, y, batch_size=8, validation_split=0.1, epochs=1)
+    model.fit(X, y, batch_size=64, validation_split=0.2, epochs=1)
     model.save("./models/autopilot.h5")
 
     # angle = model.predict(np.expand_dims(X[0], axis=0))
