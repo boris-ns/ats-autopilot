@@ -10,6 +10,21 @@ from keras.optimizers import Adam
 
 from sklearn.model_selection import train_test_split
 
+# PilotNet CNN architecture
+def create_cnn(shape):
+    return Sequential([
+        Conv2D(24, kernel_size=(5,5), strides=(2,2), activation='relu', input_shape=shape),
+        Conv2D(36, kernel_size=(5,5), strides=(2,2), activation='relu'),
+        Conv2D(48, kernel_size=(5,5), strides=(2,2), activation='relu'),
+        Conv2D(64, kernel_size=(3,3), strides=(1,1), activation='relu'),
+        Conv2D(64, kernel_size=(3,3), strides=(1,1), activation='relu'),
+        Flatten(),
+        Dense(100, activation='relu'),
+        Dense(50, activation='relu'),
+        Dense(10, activation='relu'),
+        Dense(1)
+    ])
+
 def main():
     print("Loading dataset...")
 
@@ -37,7 +52,7 @@ def main():
 
     # y_np_flipped = np.array(y_flipped)
 
-    print("Dataset loaded")
+    print("\nDataset loaded")
     print("Number of images: " + str(len(X)))
 
     shape = X[0].shape
@@ -47,20 +62,7 @@ def main():
     X = np.array(X)
     y = np.array(y)
 
-    # Original PilotNet
-
-    model = Sequential([
-        Conv2D(24, kernel_size=(5,5), strides=(2,2), activation='relu', input_shape=shape),
-        Conv2D(36, kernel_size=(5,5), strides=(2,2), activation='relu'),
-        Conv2D(48, kernel_size=(5,5), strides=(2,2), activation='relu'),
-        Conv2D(64, kernel_size=(3,3), strides=(1,1), activation='relu'),
-        Conv2D(64, kernel_size=(3,3), strides=(1,1), activation='relu'),
-        Flatten(),
-        Dense(100, activation='relu'),
-        Dense(50, activation='relu'),
-        Dense(10, activation='relu'),
-        Dense(1)
-    ])
+    model = create_cnn(shape)
 
     # Custom PilotNet 
 
@@ -86,19 +88,23 @@ def main():
     # ])
 
     model.compile(
-        optimizer='adam',
+        optimizer=Adam(),
         loss=mean_squared_error,
         metrics=['accuracy']
     )
+
+    # Probati batch normalization ??
+    # Shuffle dataset-a ?
+
+    model.fit(X, y, batch_size=64, validation_split=0.2, epochs=2, shuffle=True)
+    model.save("./models/autopilot.h5")
 
     # model.fit(np.array(train_X),np.array(train_Y),
     #       batch_size=32,nb_epoch=20,
     #       validation_data=(np.array(valid_X),np.array(valid_Y)),
     #       callbacks=[early_stop])
 
-    model.fit(X, y, batch_size=64, validation_split=0.2, epochs=1)
-    model.save("./models/autopilot.h5")
-
+    # How to make a prediction
     # angle = model.predict(np.expand_dims(X[0], axis=0))
     # print(angle)
 
