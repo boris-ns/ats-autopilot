@@ -2,8 +2,10 @@ import numpy as np
 import pandas as pd
 import cv2
 import datetime
+import sys
+import os
 
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Flatten, Dense, Activation, BatchNormalization, Conv2D, Lambda, Dropout
 from keras.losses import mean_squared_error
 from keras.optimizers import Adam
@@ -12,7 +14,7 @@ from sklearn.model_selection import train_test_split
 
 # PilotNet CNN architecture
 def create_cnn(shape):
-    return Sequential([
+    model = Sequential([
         Conv2D(24, kernel_size=(5,5), strides=(2,2), activation='relu', input_shape=shape),
         Conv2D(36, kernel_size=(5,5), strides=(2,2), activation='relu'),
         Conv2D(48, kernel_size=(5,5), strides=(2,2), activation='relu'),
@@ -25,16 +27,33 @@ def create_cnn(shape):
         Dense(1)
     ])
 
-def main():
-    print("Loading dataset...")
+    model.compile(
+        optimizer=Adam(),
+        loss=mean_squared_error,
+        metrics=['accuracy']
+    )
 
-    data = pd.read_csv("./dataset3/dataset3.csv")
+    return model
+
+def main():
+    # Default path
+    dataset_path = "./dataset3/" 
+
+    continue_training = False
+    if len(sys.argv) == 2:
+        continue_training = True
+        dataset_path = sys.argv[1]
+
+    print("\nLoading dataset from '" + dataset_path + "'...")
+
+    dataset_csv_path = os.path.join(dataset_path, 'data.csv')
+    data = pd.read_csv(dataset_csv_path)
 
     X = []
     X_flipped = []
 
     for img_name in data.image:
-        image = cv2.imread("./dataset3/" + img_name)
+        image = cv2.imread(os.path.join(dataset_path, img_name))
         X.append(image)    
     #     X_flipped.append(cv2.flip(image, 1))
 
@@ -53,7 +72,7 @@ def main():
     # y_np_flipped = np.array(y_flipped)
 
     print("\nDataset loaded")
-    print("Number of images: " + str(len(X)))
+    print("Number of images: " + str(len(X)) + "\n")
 
     shape = X[0].shape
 
@@ -62,7 +81,14 @@ def main():
     X = np.array(X)
     y = np.array(y)
 
-    model = create_cnn(shape)
+    model = None
+
+    if continue_training:
+        model = load_model("./models/autopilot.h5")
+        print("Loaded existing model")
+    else:
+        model = create_cnn(shape)
+        print("Created new model")
 
     # Custom PilotNet 
 
@@ -87,17 +113,12 @@ def main():
     #     Dense(1)
     # ])
 
-    model.compile(
-        optimizer=Adam(),
-        loss=mean_squared_error,
-        metrics=['accuracy']
-    )
-
-    # Probati batch normalization ??
-    # Shuffle dataset-a ?
+    print("\nStarted training...\n")
 
     model.fit(X, y, batch_size=64, validation_split=0.2, epochs=2, shuffle=True)
     model.save("./models/autopilot.h5")
+
+    print("\nTraining finished")
 
     # model.fit(np.array(train_X),np.array(train_Y),
     #       batch_size=32,nb_epoch=20,
