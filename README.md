@@ -6,3 +6,5 @@ The goal is to keep the truck inside its lane. Currently, it works the best on t
 ## Demo
 
 [Driving on the highway.](https://www.youtube.com/watch?v=T43E-zY8eXM&feature=youtu.be)
+
+[Driving on the country road.](https://www.youtube.com/watch?v=BTYjUCX89eI&feature=youtu.be)
