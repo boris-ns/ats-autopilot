@@ -1,4 +1,9 @@
 dataset/
+dataset3/
+dataset4/
+dataset5/
+dataset6/
+models/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

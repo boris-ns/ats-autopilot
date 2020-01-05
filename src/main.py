@@ -36,9 +36,13 @@ def process_img(original_img):
 
     return img_canny
 
+def steer(angle):
+    # TODO: Create algorith for smooth steering
+    setJoy(angle, 0, 16000)
+
 if __name__ == "__main__":
 
-    model = load_model("./models/autopilot.h5")
+    model = load_model("../models/autopilot2.h5")
 
     vj.open()
     setJoy(0, 0, 16000)
@@ -48,33 +52,17 @@ if __name__ == "__main__":
         img_np = np.array(img)
         frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
 
-        # processed_img = process_img(frame)
-        # cv2.imshow("Processed image", processed_img)
-
         cv2.imshow("Original", frame)
 
         predicted_angle = model.predict(np.expand_dims(frame, axis=0))[0][0]
 
-        # Normalizacija
-        # predicted_angle = (predicted_angle - -5) / 5 - -5
-
-        # if predicted_angle > 1 or predicted_angle < -1:
-        #     predicted_angle /= 100000
-
         steering_angle = 0
-
-        # if predicted_angle > 1: 
-        #     predicted_angle = 1
-        # elif predicted_angle < -1:
-        #     predicted_angle = -1
-
-        # TODO: Da li treba dodati neku normalizaciju ?
-
+        # TODO: Normalization ?
         steering_angle = predicted_angle
 
         print("Predicted: " + str(predicted_angle) + " Steering angle: " + str(steering_angle))
 
-        setJoy(steering_angle, 0, 16000)
+        steer(steering_angle)
         
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()

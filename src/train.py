@@ -37,7 +37,7 @@ def create_cnn(shape):
 
 def main():
     # Default path
-    dataset_path = "./dataset3/" 
+    dataset_path = "../dataset3/" 
 
     continue_training = False
     if len(sys.argv) == 2:
@@ -84,46 +84,18 @@ def main():
     model = None
 
     if continue_training:
-        model = load_model("./models/autopilot.h5")
-        print("Loaded existing model")
+        model = load_model("../models/autopilot.h5")
+        print("\nLoaded existing model")
     else:
         model = create_cnn(shape)
-        print("Created new model")
-
-    # Custom PilotNet 
-
-    # model = Sequential([
-    #     Conv2D(24, kernel_size=(5,5), strides=(2,2), activation='relu', input_shape=shape),
-    #     BatchNormalization(),
-    #     Conv2D(36, kernel_size=(5,5), strides=(2,2), activation='relu'),
-    #     BatchNormalization(),
-    #     Conv2D(48, kernel_size=(5,5), strides=(2,2), activation='relu'),
-    #     BatchNormalization(),
-    #     Conv2D(64, kernel_size=(3,3), strides=(1,1), activation='relu'),
-    #     BatchNormalization(),
-    #     Conv2D(64, kernel_size=(3,3), strides=(1,1), activation='relu'),
-    #     BatchNormalization(),
-    #     Flatten(),
-    #     Dense(100, activation='relu'),
-    #     BatchNormalization(),
-    #     Dense(50, activation='relu'),
-    #     BatchNormalization(),
-    #     Dense(10, activation='relu'),
-    #     BatchNormalization(),
-    #     Dense(1)
-    # ])
+        print("\nCreated new model")
 
     print("\nStarted training...\n")
 
-    model.fit(X, y, batch_size=64, validation_split=0.2, epochs=2, shuffle=True)
-    model.save("./models/autopilot.h5")
+    model.fit(X, y, batch_size=64, validation_split=0.2, epochs=8, shuffle=True)
+    model.save("../models/autopilot.h5")
 
     print("\nTraining finished")
-
-    # model.fit(np.array(train_X),np.array(train_Y),
-    #       batch_size=32,nb_epoch=20,
-    #       validation_data=(np.array(valid_X),np.array(valid_Y)),
-    #       callbacks=[early_stop])
 
     # How to make a prediction
     # angle = model.predict(np.expand_dims(X[0], axis=0))

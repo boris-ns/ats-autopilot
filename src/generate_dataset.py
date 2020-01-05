@@ -29,7 +29,7 @@ def main():
     print("Joystick 0 name: " + joystick.get_name())
 
     pygame.display.init()
-    dataset_file = open("./dataset3/dataset3.csv", "a")
+    dataset_file = open("../dataset6/data.csv", "a")
 
     recording = False
 
@@ -69,7 +69,7 @@ def main():
         print("X axis: {0}".format(joystick.get_axis(0)))
 
         img_filename = str(img_file_counter) + ".jpg"
-        cv2.imwrite("./dataset3/" + img_filename, frame)
+        cv2.imwrite("../dataset6/" + img_filename, frame)
         img_file_counter += 1
 
         dataset_file.write("\n{0},{1}".format(img_filename, joystick.get_axis(0)))
