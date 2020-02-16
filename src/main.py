@@ -52,9 +52,15 @@ if __name__ == "__main__":
         img_np = np.array(img)
         frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
 
-        cv2.imshow("Original", frame)
+        # frame_gs = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+
+        cv2.imshow("Original frame", frame)
+        # cv2.imshow("Grayscale frame", frame_gs)
 
         predicted_angle = model.predict(np.expand_dims(frame, axis=0))[0][0]
+        
+        # Predict for grayscale image
+        # predicted_angle = model.predict(np.expand_dims(frame_gs[:, :, np.newaxis], axis=0))[0][0]
 
         steering_angle = 0
         # TODO: Normalization ?
