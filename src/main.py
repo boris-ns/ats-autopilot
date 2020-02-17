@@ -1,57 +1,53 @@
 import cv2
 import numpy as np
-from PIL import ImageGrab
 import pygame
+from PIL import ImageGrab
 from vjoy import vj, setJoy
-
 from keras.models import load_model
 
-def get_region_of_interest(image, vertices):
-    mask = np.zeros_like(image)
-    cv2.fillPoly(mask, vertices, 255)
-    result = cv2.bitwise_and(image, mask)
-    
-    return result
+STEER_STEP = 0.005
 
-def draw_lines(image, lines):
-    if lines is None:
-        return
+def steer(prev_angle, angle):
+    if prev_angle < angle:
+        # GO RIGHT
+        while prev_angle < angle:
+            prev_angle += STEER_STEP
 
-    for line in lines:
-        temp = line[0]
-        color = [255, 0, 0]
-        cv2.line(image, (temp[0], temp[1]), (temp[2], temp[3]), color, 5)
+            if prev_angle >= angle:
+                setJoy(angle, 0, 16000)
+                break
+            else:
+                setJoy(prev_angle, 0, 16000)
 
+    elif prev_angle > angle:
+        # GO LEFT
+        while prev_angle > angle:
+            prev_angle -= STEER_STEP
 
-def process_img(original_img):
-    img_gs = cv2.cvtColor(original_img, cv2.COLOR_RGB2GRAY)
-    img_canny = cv2.Canny(img_gs, 50, 100)
-
-    roi_vertices = np.array([[35, 405], [155, 225], [240, 220], [465, 405]])
-    img_canny = get_region_of_interest(img_canny, [roi_vertices])
-    img_canny = cv2.GaussianBlur(img_canny, (5, 5), 0)
-
-    lines = cv2.HoughLinesP(img_canny, 4, np.pi/180, 180, 10, 20)    
-    draw_lines(img_canny, lines)
-
-    return img_canny
-
-def steer(angle):
-    # TODO: Create algorith for smooth steering
-    setJoy(angle, 0, 16000)
+            if prev_angle <= angle:
+                setJoy(angle, 0, 16000)
+                break
+            else:
+                setJoy(prev_angle, 0, 16000)
+    else:
+        # STAY
+        setJoy(angle, 0, 16000)
 
 if __name__ == "__main__":
 
     model = load_model("../models/autopilot2.h5")
+    model.summary()
 
     vj.open()
     setJoy(0, 0, 16000)
+
+    steering_angle = 0
+    prev_angle = 0
 
     while(True):
         img = ImageGrab.grab(bbox=(500,330,850,500)) # (bbox= x,y,width,height)
         img_np = np.array(img)
         frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
-
         # frame_gs = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
         cv2.imshow("Original frame", frame)
@@ -62,13 +58,12 @@ if __name__ == "__main__":
         # Predict for grayscale image
         # predicted_angle = model.predict(np.expand_dims(frame_gs[:, :, np.newaxis], axis=0))[0][0]
 
-        steering_angle = 0
-        # TODO: Normalization ?
+        prev_angle = steering_angle
         steering_angle = predicted_angle
 
-        print("Predicted: " + str(predicted_angle) + " Steering angle: " + str(steering_angle))
+        print("Predicted: " + str(predicted_angle))
 
-        steer(steering_angle)
+        steer(prev_angle, steering_angle)
         
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
