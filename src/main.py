@@ -5,7 +5,13 @@ from PIL import ImageGrab
 from vjoy import vj, setJoy
 from keras.models import load_model
 
+# Config
+SCREEN_GRAB_BOX = (500,330,850,500) # (x, y, w, h)
+MODEL_PATH = "../models/autopilot2.h5"
 STEER_STEP = 0.005
+
+def joystick_steer(angle):
+    setJoy(angle, 0, 16000)
 
 def steer(prev_angle, angle):
     if prev_angle < angle:
@@ -14,10 +20,10 @@ def steer(prev_angle, angle):
             prev_angle += STEER_STEP
 
             if prev_angle >= angle:
-                setJoy(angle, 0, 16000)
+                joystick_steer(angle)
                 break
             else:
-                setJoy(prev_angle, 0, 16000)
+                joystick_steer(prev_angle)
 
     elif prev_angle > angle:
         # GO LEFT
@@ -25,27 +31,27 @@ def steer(prev_angle, angle):
             prev_angle -= STEER_STEP
 
             if prev_angle <= angle:
-                setJoy(angle, 0, 16000)
+                joystick_steer(angle)
                 break
             else:
-                setJoy(prev_angle, 0, 16000)
+                joystick_steer(prev_angle)
     else:
         # STAY
-        setJoy(angle, 0, 16000)
+        joystick_steer(angle)
 
 if __name__ == "__main__":
 
-    model = load_model("../models/autopilot2.h5")
+    model = load_model(MODEL_PATH)
     model.summary()
 
     vj.open()
-    setJoy(0, 0, 16000)
+    joystick_steer(0)
 
     steering_angle = 0
     prev_angle = 0
 
     while(True):
-        img = ImageGrab.grab(bbox=(500,330,850,500)) # (bbox= x,y,width,height)
+        img = ImageGrab.grab(bbox=SCREEN_GRAB_BOX) # (x, y, w, h)
         img_np = np.array(img)
         frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
         # frame_gs = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
@@ -70,5 +76,5 @@ if __name__ == "__main__":
             break
 
     # Reset and close virtual joystick
-    setJoy(0, 0, 16000)
+    joystick_steer(0)
     vj.close()

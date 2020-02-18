@@ -5,6 +5,9 @@ import pygame
 import time
 import sys
 
+# Config
+SCREEN_GRAB_BOX = (500,330,850,500) # (x, y, w, h)
+
 def main():
     if len(sys.argv) != 2:
         return
@@ -59,7 +62,7 @@ def main():
 
         time.sleep(0.2)
 
-        img = ImageGrab.grab(bbox=(500,330,850,500)) # (bbox= x,y,width,height)
+        img = ImageGrab.grab(bbox=SCREEN_GRAB_BOX) # (x, y, w, h)
         img_np = np.array(img)
         frame = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
 
