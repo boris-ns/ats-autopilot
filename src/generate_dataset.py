@@ -7,6 +7,8 @@ import sys
 
 # Config
 SCREEN_GRAB_BOX = (500,330,850,500) # (x, y, w, h)
+DATASET_PATH = "../dataset6/"
+DATA_CSV_PATH = "../dataset6/data.csv"
 
 def main():
     if len(sys.argv) != 2:
@@ -32,7 +34,7 @@ def main():
     print("Joystick 0 name: " + joystick.get_name())
 
     pygame.display.init()
-    dataset_file = open("../dataset6/data.csv", "a")
+    dataset_file = open(DATA_CSV_PATH, "a")
 
     recording = False
 
@@ -72,7 +74,7 @@ def main():
         print("X axis: {0}".format(joystick.get_axis(0)))
 
         img_filename = str(img_file_counter) + ".jpg"
-        cv2.imwrite("../dataset6/" + img_filename, frame)
+        cv2.imwrite(DATASET_PATH + img_filename, frame)
         img_file_counter += 1
 
         dataset_file.write("\n{0},{1}".format(img_filename, joystick.get_axis(0)))
