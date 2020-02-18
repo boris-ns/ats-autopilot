@@ -59,11 +59,11 @@ def main():
             image = cv2.imread(os.path.join(dataset_path, img_name))
             
             img_gs = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-            #img_canny = cv2.Canny(img_gs, 50, 100)
-            #img_canny = cv2.GaussianBlur(img_canny, (5, 5), 0)
+            img_canny = cv2.Canny(img_gs, 50, 100)
+            img_canny = cv2.GaussianBlur(img_canny, (5, 5), 0)
 
             # X.append(np.expand_dims(img_gs, axis=1))
-            X.append(img_gs[:, :, np.newaxis])
+            X.append(img_canny[:, :, np.newaxis])
 
         for angle in data.angle:
             y.append(angle)
@@ -81,7 +81,7 @@ def main():
         y = np.array(y)
 
         print("\nStarted training for dataset '" + dataset_path + "'")
-        model.fit(X, y, batch_size=64, validation_split=0.2, epochs=8, shuffle=True)
+        model.fit(X, y, batch_size=64, validation_split=0.2, epochs=5, shuffle=True)
         print("\nFinished training for dataset '" + dataset_path + "'")
 
 
