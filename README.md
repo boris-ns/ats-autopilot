@@ -63,7 +63,8 @@ In config section set values according to your needs.
 
 This will start saving images from 0.
 ```
-python src/generate_dataset.py
+cd src
+python generate_dataset.py
 ```
 If you want you can pass an integer as command line argument, and the script will just 
 continue saving images from that number into the existing dataset folder.
