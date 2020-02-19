@@ -10,6 +10,8 @@ _NOTE:_ This project should also work on Euro Truck Simulator 2, since those two
 
 [Driving on the highway.](https://www.youtube.com/watch?v=T43E-zY8eXM&feature=youtu.be)
 
+[Driving on the highway 2.](https://www.youtube.com/watch?v=uimxQz_ED38&feature=youtu.be)
+
 [Driving on the country road.](https://www.youtube.com/watch?v=BTYjUCX89eI&feature=youtu.be)
 
 [Driving on the country road 2.](https://www.youtube.com/watch?v=2qf9IKp55QQ&feature=youtu.be)
@@ -69,3 +71,8 @@ python src/generate_dataset.py 1234
 
 The script is configured to use Joystick button 0 as a command to start or pause recording.
 
+## Trained models
+
+You can find two trained models [here](https://drive.google.com/open?id=1tjCDPcJwzq5sHgOkz-q3fp-0RRqaCUZI).  
+```autopilot2.h5``` is made with 40k images dataset with no image processing.
+```autopilot_canny.h5``` is made with 40k images dataset with canny edge detection.
