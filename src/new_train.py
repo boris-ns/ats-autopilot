@@ -9,6 +9,7 @@ from keras.models import Sequential, load_model
 from keras.layers import Flatten, Dense, Activation, BatchNormalization, Conv2D, Lambda, Dropout
 from keras.losses import mean_squared_error
 from keras.optimizers import Adam
+from keras.callbacks import CSVLogger
 
 from sklearn.model_selection import train_test_split
 
@@ -39,12 +40,13 @@ def main():
     model_path = "../models/autopilot_new.h5"
     dataset_paths = [
         "../dataset4/",
-        "../dataset3/",
-        "../dataset5/",
-        "../dataset6/",
+        # "../dataset3/",
+        # "../dataset5/",
+        # "../dataset6/",
     ]
     
     model = None
+    csv_logger = CSVLogger('../models/training.log', separator=',', append=False)
 
     for dataset_path in dataset_paths:
         print("\nLoading dataset from '" + dataset_path + "'...")
@@ -81,7 +83,7 @@ def main():
         y = np.array(y)
 
         print("\nStarted training for dataset '" + dataset_path + "'")
-        model.fit(X, y, batch_size=64, validation_split=0.2, epochs=5, shuffle=True)
+        model.fit(X, y, batch_size=64, validation_split=0.2, epochs=5, shuffle=True, callbacks=[csv_logger])
         print("\nFinished training for dataset '" + dataset_path + "'")
 
 
