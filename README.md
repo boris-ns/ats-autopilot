@@ -43,7 +43,8 @@ Inside ```main.py``` you can configure these variables according to your needs:
 - ```STEER_STEP = 0.005``` - step for smooth steering, you can leave it like this (the smaller number, the smoother steering).
 Also, before running this script make sure you set vJoy as controller inside the game.  
 ```
-python src/main.py
+cd src
+python main.py
 ```
 
 ### new_train.py
@@ -52,7 +53,8 @@ python src/main.py
 ```new_train.py```. In ```main()``` method you need to configure ```model_path``` and ```dataset_paths``` variables. You can use multiple dataset folders, as long as all of them contain it's own ```data.csv``` file.  
 Then, just run:  
 ```
-python src/new_train.py
+cd src
+python new_train.py
 ```
 
 ### generate_dataset.py
@@ -66,7 +68,8 @@ python src/generate_dataset.py
 If you want you can pass an integer as command line argument, and the script will just 
 continue saving images from that number into the existing dataset folder.
 ```
-python src/generate_dataset.py 1234
+cd src
+python generate_dataset.py 1234
 ```
 
 The script is configured to use Joystick button 0 as a command to start or pause recording.
