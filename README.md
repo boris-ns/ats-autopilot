@@ -74,5 +74,5 @@ The script is configured to use Joystick button 0 as a command to start or pause
 ## Trained models
 
 You can find two trained models [here](https://drive.google.com/open?id=1tjCDPcJwzq5sHgOkz-q3fp-0RRqaCUZI).  
-```autopilot2.h5``` is made with 40k images dataset with no image processing.
-```autopilot_canny.h5``` is made with 40k images dataset with canny edge detection.
+- ```autopilot2.h5``` is made with 40k images dataset with no image processing.
+- ```autopilot_canny.h5``` is made with 40k images dataset with canny edge detection.
