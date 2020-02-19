@@ -40,9 +40,9 @@ def main():
     model_path = "../models/autopilot_new.h5"
     dataset_paths = [
         "../dataset4/",
-        # "../dataset3/",
-        # "../dataset5/",
-        # "../dataset6/",
+        "../dataset3/",
+        "../dataset5/",
+        "../dataset6/",
     ]
     
     model = None
